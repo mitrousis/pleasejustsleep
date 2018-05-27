@@ -1,0 +1,7 @@
+---
+extends: airbnb-base/legacy
+rules:
+  semi:
+    - always
+
+  eol-last: never
