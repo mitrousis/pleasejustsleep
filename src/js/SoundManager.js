@@ -2,9 +2,14 @@ class SoundManager {
 
   constructor(){
     this.audioContext  = new (window.AudioContext || window.webkitAudioContext);
-    
+
     this.gainNode      = this.audioContext.createGain();
     this.gainNode.connect(this.audioContext.destination);
+
+    setInterval(() => {
+      console.log(this.gainNode.gain.value);
+      console.log(this.audioContext.currentTime);
+    }, 500)
   }
 
   createNoiseBuffer(type){
@@ -46,12 +51,18 @@ class SoundManager {
     source.connect(this.gainNode);
     
     return source;
-
   }
 
   setVolume(volume = 1) {
+    // Volume must be above 0...
+    if(volume <= 0) volume = .0001;
     this.gainNode.gain.setValueAtTime(volume, this.audioContext.currentTime);
   }
+
+  fadeTo(volume, duration = 1) {
+    this.gainNode.gain.linearRampToValueAtTime(volume, this.audioContext.currentTime + duration);
+  }
+
 }
 
 SoundManager.WHITE = 'white';

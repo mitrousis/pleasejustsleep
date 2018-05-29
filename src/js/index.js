@@ -8,7 +8,8 @@ const SoundManager = require('../js/SoundManager');
 const soundManager = new SoundManager();
 
 soundManager.getAudioSourceNode(SoundManager.BROWN).start();
-soundManager.setVolume(1);
+soundManager.setVolume(0);
+soundManager.fadeTo(1, 5);
 
 
 
