@@ -1,0 +1,21 @@
+.pause-button {
+  visibility: hidden;
+}
+
+.play-pause {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+  .action {
+    font-family: $fontBody;
+    color: #ffffff;
+    text-align: center;
+  }
+  
+  .material-icons {
+    color: #ffffff;
+    font-size: 5rem;
+  }
+}

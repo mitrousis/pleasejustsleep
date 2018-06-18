@@ -31,25 +31,24 @@ module.exports = [
         filename: 'index.html',
         chunks: ['index']
       }),
-      // new webpack.ProvidePlugin({
-      //   $: 'jquery',
-      //   jQuery: 'jquery',
-      //   semantic: 'semantic-ui-css'
-      // }),
-      // new CopyWebpackPlugin([
-      //   { from: 'src/config', to: '../config' },
-      //   { from: 'src/main', to: '../main' }
-      // ])
+      new webpack.ProvidePlugin({
+        // $: 'jquery',
+        // jQuery: 'jquery'
+      }),
     ],
     module: {
       rules: [
         {
-          test: /\.css$/,
-          use: [ 'style-loader', 'css-loader' ]
+          test: /\.(scss|css)$/,
+          use: [ 'style-loader', 'css-loader', 'sass-loader' ]
         },
         {
           test: /\.(png|jpg)$/,
           loader: 'url-loader'
+        },
+        {
+          test: /\.(ejs|html)$/,
+          use: 'raw-loader'
         },
         {
           test: /\.(ttf|eot|woff|woff2|svg)$/,

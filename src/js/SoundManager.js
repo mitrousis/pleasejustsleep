@@ -6,10 +6,10 @@ class SoundManager {
     this.gainNode      = this.audioContext.createGain();
     this.gainNode.connect(this.audioContext.destination);
 
-    setInterval(() => {
-      console.log(this.gainNode.gain.value);
-      console.log(this.audioContext.currentTime);
-    }, 500)
+    // setInterval(() => {
+    //   console.log(this.gainNode.gain.value);
+    //   console.log(this.audioContext.currentTime);
+    // }, 500)
   }
 
   createNoiseBuffer(type){
