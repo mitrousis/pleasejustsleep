@@ -28,7 +28,7 @@ module.exports = [
       new HtmlWebpackPlugin({
         template: './src/index.template.ejs',
         inject: 'body',
-        filename: 'index.html',
+        filename: '../index.html',
         chunks: ['index']
       }),
       new webpack.ProvidePlugin({

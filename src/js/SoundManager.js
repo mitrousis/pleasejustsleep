@@ -1,4 +1,4 @@
-class SoundManager {
+export default class SoundManager {
 
   constructor(){
     this.audioContext  = new (window.AudioContext || window.webkitAudioContext);
@@ -67,5 +67,3 @@ class SoundManager {
 
 SoundManager.WHITE = 'white';
 SoundManager.BROWN = 'brown';
-
-module.exports = SoundManager;

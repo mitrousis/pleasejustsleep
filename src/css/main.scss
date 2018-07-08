@@ -44,11 +44,5 @@ body {
   background: -webkit-linear-gradient(top, #030319 27%,#46616d 85%,#997804 97%,#601102 100%); /* Chrome10-25,Safari5.1-6 */
   background: linear-gradient(to bottom, #030319 27%,#46616d 85%,#997804 97%,#601102 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#030319', endColorstr='#601102',GradientType=0 ); /* IE6-9 */
-  
-  canvas {
-    width: 100%;
-    height: 100%;
-  }
-  
-  
+
 }

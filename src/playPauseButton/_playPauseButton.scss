@@ -1,4 +1,8 @@
-.pause-button {
+// .state-enabled {
+//   visibility: visible;
+// }
+
+.state-disabled {
   visibility: hidden;
 }
 
@@ -9,7 +13,7 @@
   transform: translate(-50%, -50%);
   
   .action {
-    font-family: $fontBody;
+    font-family: $fontHeading;
     color: #ffffff;
     text-align: center;
   }
