@@ -4,6 +4,7 @@ export default class PlayPauseButton {
   constructor() {
     let el = document.createElement('div');
     el.innerHTML = template;
+    el.id = 'play-pause-button';
 
     this.template = el;
 

@@ -13,9 +13,16 @@ const starBackground  = new StarBackground();
 document.getElementsByClassName('controls')[0].appendChild(playPauseButton.template);
 playPauseButton.state = 'paused';
 
-// soundManager.getAudioSourceNode(SoundManager.BROWN).start();
-// soundManager.setVolume(0);
-// soundManager.fadeTo(1, 5);
+window.main = this;
+
+playPauseButton.template.addEventListener('click', () => {
+  console.log("!");
+  soundManager.togglePlayback();
+});
+
+
+
+
 
 
 

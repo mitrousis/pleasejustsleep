@@ -6,10 +6,8 @@ export default class SoundManager {
     this.gainNode      = this.audioContext.createGain();
     this.gainNode.connect(this.audioContext.destination);
 
-    // setInterval(() => {
-    //   console.log(this.gainNode.gain.value);
-    //   console.log(this.audioContext.currentTime);
-    // }, 500)
+    this.sourceNode = null;
+    this.isPlaying  = false;
   }
 
   createNoiseBuffer(type){
@@ -61,6 +59,24 @@ export default class SoundManager {
 
   fadeTo(volume, duration = 1) {
     this.gainNode.gain.linearRampToValueAtTime(volume, this.audioContext.currentTime + duration);
+  }
+
+  togglePlayback() {
+
+    if(this.isPlaying) {
+      let fadeTime = 2;
+      // Stop at fade time
+      this.sourceNode.stop(this.audioContext.currentTime + fadeTime);
+      this.fadeTo(0, fadeTime);
+      
+    } else {
+      this.sourceNode = this.getAudioSourceNode(SoundManager.BROWN);
+      this.sourceNode.start();
+      this.setVolume(0);
+      this.fadeTo(1, 5);
+      this.isPlaying = true;
+    }
+  
   }
 
 }
