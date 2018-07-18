@@ -2,15 +2,21 @@ export default class SoundManager {
 
   constructor(){
     this.audioContext  = new (window.AudioContext || window.webkitAudioContext);
-
     this.gainNode      = this.audioContext.createGain();
     this.gainNode.connect(this.audioContext.destination);
 
-    this.sourceNode = null;
-    this.isPlaying  = false;
+    this.noiseBuffers = {};
+    this.sourceNode   = null;
+    this.isPlaying    = false;
+
+    // For debugging
+    global.mgr = this;
   }
 
   createNoiseBuffer(type){
+    // Don't recreate these 
+    if(this.noiseBuffers[type]) return this.noiseBuffers[type];
+
     let bufferSize    = 2 * this.audioContext.sampleRate;
 
     let noiseBuffer   = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
@@ -37,11 +43,12 @@ export default class SoundManager {
           break;
       }
     }
-      
+    
+    this.noiseBuffers[type] = noiseBuffer;
     return noiseBuffer;
   }
 
-  getAudioSourceNode(type){
+  createAudioSourceNode(type){
     var source    = this.audioContext.createBufferSource();
     source.buffer = this.createNoiseBuffer(type);
     source.loop   = true;
@@ -54,32 +61,50 @@ export default class SoundManager {
   setVolume(volume = 1) {
     // Volume must be above 0...
     if(volume <= 0) volume = .0001;
+    //this.gainNode.gain.cancelScheduledValues(this.audioContext.currentTime);
     this.gainNode.gain.setValueAtTime(volume, this.audioContext.currentTime);
   }
 
   fadeTo(volume, duration = 1) {
+    if(volume <= 0) volume = .0001;
+    //this.gainNode.gain.cancelScheduledValues(this.audioContext.currentTime);
     this.gainNode.gain.linearRampToValueAtTime(volume, this.audioContext.currentTime + duration);
   }
 
   togglePlayback() {
+    let fadeTime = 2;
+
+    console.log('toggle playback');
 
     if(this.isPlaying) {
-      let fadeTime = 2;
       // Stop at fade time
       this.sourceNode.stop(this.audioContext.currentTime + fadeTime);
       this.fadeTo(0, fadeTime);
-      
+      this.isPlaying = false;
+
     } else {
-      this.sourceNode = this.getAudioSourceNode(SoundManager.BROWN);
-      this.sourceNode.start();
-      this.setVolume(0);
-      this.fadeTo(1, 5);
-      this.isPlaying = true;
+
+      if(!this.sourceNode){
+        this.sourceNode = this.createAudioSourceNode(SoundManager.BROWN);
+        this.sourceNode.start();
+        this.sourceNode.onended = this.onAudioEnd.bind(this);
+
+        this.setVolume(0);
+        this.isPlaying = true;
+      }
+      
+      this.fadeTo(1, fadeTime);
     }
   
   }
 
+  onAudioEnd() {
+    this.sourceNode = null;
+    console.log('audio end');
+  }
+
 }
+
 
 SoundManager.WHITE = 'white';
 SoundManager.BROWN = 'brown';

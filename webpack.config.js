@@ -12,17 +12,20 @@ module.exports = [
     },
     output: {
       filename: '[name].js',
-      path: path.resolve(__dirname, './public/js/')
+      path: path.resolve(__dirname, './public/js/'),
+      publicPath: path.resolve(__dirname, './public/')
     },
     externals: {
     },
     devServer: {
-      contentBase: './public'
+      host: '0.0.0.0',
+      contentBase: path.resolve(__dirname, './public')
+      //publicPath: path.resolve(__dirname, './public/')
     },
     plugins: [
       new DelWebpackPlugin({
         include: [
-          'public/'
+          path.resolve(__dirname, './public')
         ]
       }),
       new HtmlWebpackPlugin({

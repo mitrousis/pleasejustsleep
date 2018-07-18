@@ -11,13 +11,17 @@ const playPauseButton = new PlayPauseButton();
 const starBackground  = new StarBackground();
 
 document.getElementsByClassName('controls')[0].appendChild(playPauseButton.template);
-playPauseButton.state = 'paused';
+playPauseButton.state = PlayPauseButton.STATE_PLAY;
 
-window.main = this;
 
 playPauseButton.template.addEventListener('click', () => {
-  console.log("!");
   soundManager.togglePlayback();
+
+  if(soundManager.isPlaying) {
+    playPauseButton.state = PlayPauseButton.STATE_PAUSE;
+  } else {
+    playPauseButton.state = PlayPauseButton.STATE_PLAY;
+  }
 });
 
 

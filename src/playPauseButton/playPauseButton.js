@@ -12,12 +12,12 @@ export default class PlayPauseButton {
 
   set state(stateName) {
     switch(stateName) {
-      case 'paused':
+      case PlayPauseButton.STATE_PLAY:
       document.getElementsByClassName('pause-button')[0].classList.add('state-disabled');
       document.getElementsByClassName('play-button')[0].classList.remove('state-disabled');
       break;
 
-      case 'playing':
+      case PlayPauseButton.STATE_PAUSE:
       document.getElementsByClassName('pause-button')[0].classList.remove('state-disabled');
       document.getElementsByClassName('play-button')[0].classList.add('state-disabled');
       break;
@@ -25,3 +25,6 @@ export default class PlayPauseButton {
     
   }
 }
+
+PlayPauseButton.STATE_PLAY   = 'play';
+PlayPauseButton.STATE_PAUSE  = 'pause';
