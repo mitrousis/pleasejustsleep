@@ -103,6 +103,11 @@ export default class SoundManager {
     console.log('audio end');
   }
 
+  getWav(){
+    let convert = require('./AudioBufferToWav');
+    return new convert(this.createNoiseBuffer(SoundManager.BROWN));
+  }
+
 }
 
 

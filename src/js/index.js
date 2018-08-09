@@ -15,6 +15,17 @@ playPauseButton.state = PlayPauseButton.STATE_PLAY;
 
 
 playPauseButton.template.addEventListener('click', () => {
+
+  // var wav = soundManager.getWav();
+  // var blob = new window.Blob([ new DataView(wav) ], {
+  //   type: 'audio/wav'
+  // })
+
+  // console.log(blob);
+
+  // var url = window.URL.createObjectURL(blob)
+
+  // console.log(url)
   soundManager.togglePlayback();
 
   if(soundManager.isPlaying) {

@@ -17,10 +17,21 @@
     font-family: $fontHeading;
     color: #ffffff;
     text-align: center;
+    font-size: 1.5rem;
   }
   
   .material-icons {
     color: #ffffff;
     font-size: 5rem;
+  }
+
+  @include for-tablet-portrait-down {
+    .action {
+      font-size: 2rem;
+    }
+    
+    .material-icons {
+      font-size: 8rem;
+    }
   }
 }
