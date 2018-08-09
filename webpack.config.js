@@ -34,10 +34,13 @@ module.exports = [
         filename: '../index.html',
         chunks: ['index']
       }),
-      new webpack.ProvidePlugin({
-        // $: 'jquery',
-        // jQuery: 'jquery'
-      }),
+      // new webpack.ProvidePlugin({
+      //   // $: 'jquery',
+      //   // jQuery: 'jquery'
+      // }),
+      new CopyWebpackPlugin([
+        { from: 'src/media', to: '../media' }
+      ])
     ],
     module: {
       rules: [

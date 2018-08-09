@@ -10,7 +10,9 @@
   },
   "author": "",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "gsap": "^2.0.1"
+  },
   "devDependencies": {
     "bluebird": "^3.5.1",
     "chai": "^4.1.2",

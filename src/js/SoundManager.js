@@ -1,111 +1,118 @@
+import {TweenMax, Power2, Linear} from "gsap/TweenMax";
+
 export default class SoundManager {
 
-  constructor(){
-    this.audioContext  = new (window.AudioContext || window.webkitAudioContext);
-    this.gainNode      = this.audioContext.createGain();
-    this.gainNode.connect(this.audioContext.destination);
+  constructor(){   
+    this.sourceNode    = null;
+    this.isPlaying     = false;
+    this.isCrossFading = false;
+    this.crossFadeTime = 1;
 
-    this.noiseBuffers = {};
-    this.sourceNode   = null;
-    this.isPlaying    = false;
-
-    // For debugging
-    global.mgr = this;
-  }
-
-  createNoiseBuffer(type){
-    // Don't recreate these 
-    if(this.noiseBuffers[type]) return this.noiseBuffers[type];
-
-    let bufferSize    = 2 * this.audioContext.sampleRate;
-
-    let noiseBuffer   = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
-    let output        = noiseBuffer.getChannelData(0);
-  
-    // Do the calculations
-    let lastOut = 0;
-
-    for (let i = 0; i < bufferSize; i++) {
-      let randSample = Math.random() * 2 - 1;
-
-      switch(type) {
-        case SoundManager.BROWN:
-          lastOut        = (lastOut + (0.02 * randSample)) / 1.02;
-          output[i]      = lastOut * 3.5;
-
-          break;
-
-        case SoundManager.WHITE:
-        default:
-        
-          output[i] = randSample;
-          
-          break;
-      }
-    }
+    this.tracks = [
+      this.createTrack(),
+      this.createTrack()
+    ];
     
-    this.noiseBuffers[type] = noiseBuffer;
-    return noiseBuffer;
   }
 
-  createAudioSourceNode(type){
-    var source    = this.audioContext.createBufferSource();
-    source.buffer = this.createNoiseBuffer(type);
-    source.loop   = true;
+  createTrack() {
+    let el = document.createElement('audio');
+    el.src = "./media/brown-noise.mp3";
+    el.addEventListener('timeupdate', this.onTimeUpdate.bind(this));
 
-    source.connect(this.gainNode);
-    
-    return source;
+    return el;
   }
+  // setVolume(volume = 1) {
+  //   // Volume must be above 0...
+  //   if(volume <= 0) volume = .0001;
+  //   //this.gainNode.gain.cancelScheduledValues(this.audioContext.currentTime);
+  //   this.gainNode.gain.setValueAtTime(volume, this.audioContext.currentTime);
+  // }
 
-  setVolume(volume = 1) {
-    // Volume must be above 0...
-    if(volume <= 0) volume = .0001;
-    //this.gainNode.gain.cancelScheduledValues(this.audioContext.currentTime);
-    this.gainNode.gain.setValueAtTime(volume, this.audioContext.currentTime);
-  }
-
-  fadeTo(volume, duration = 1) {
-    if(volume <= 0) volume = .0001;
-    //this.gainNode.gain.cancelScheduledValues(this.audioContext.currentTime);
-    this.gainNode.gain.linearRampToValueAtTime(volume, this.audioContext.currentTime + duration);
-  }
+  // fadeTo(volume, duration = 1) {
+  //   if(volume <= 0) volume = .0001;
+  //   //this.gainNode.gain.cancelScheduledValues(this.audioContext.currentTime);
+  //   this.gainNode.gain.linearRampToValueAtTime(volume, this.audioContext.currentTime + duration);
+  // }
 
   togglePlayback() {
     let fadeTime = 2;
 
-    console.log('toggle playback');
-
     if(this.isPlaying) {
-      // Stop at fade time
-      this.sourceNode.stop(this.audioContext.currentTime + fadeTime);
-      this.fadeTo(0, fadeTime);
+      this.fadeTrack(this.currentTrack, 'out', true);
       this.isPlaying = false;
 
     } else {
-
-      if(!this.sourceNode){
-        this.sourceNode = this.createAudioSourceNode(SoundManager.BROWN);
-        this.sourceNode.start();
-        this.sourceNode.onended = this.onAudioEnd.bind(this);
-
-        this.setVolume(0);
-        this.isPlaying = true;
-      }
+      this.startTrack(0);
       
-      this.fadeTo(1, fadeTime);
+      this.isPlaying = true;
+
+      
+
     }
   
   }
 
-  onAudioEnd() {
-    this.sourceNode = null;
-    console.log('audio end');
+  startTrack(trackId) {
+    this.currentTrack = trackId;
+
+    this.tracks[this.currentTrack].currentTime = 0;
+    this.tracks[this.currentTrack].play();
+    this.tracks[this.currentTrack].volume = 0;
+
+    this.fadeTrack(this.currentTrack, 'in');
   }
 
-  getWav(){
-    let convert = require('./AudioBufferToWav');
-    return new convert(this.createNoiseBuffer(SoundManager.BROWN));
+  onTimeUpdate(event) {
+    let t = this.tracks[this.currentTrack].currentTime;
+    let d = this.tracks[this.currentTrack].duration;
+    
+    if(this.isPlaying && !this.isCrossFading && d - t <= this.crossFadeTime){
+      this.crossFade();
+    }
+  }
+
+  crossFade() {
+    console.log("cross!");
+    this.isCrossFading = true;
+
+    this.fadeTrack(this.currentTrack, 'out');
+    let nextTrack = (this.currentTrack === 0) ? 1 : 0;
+
+    this.startTrack(nextTrack);
+  }
+
+  /**
+   * 
+   * @param {*} trackId 
+   * @param {*} dir 'in' or 'out'
+   * @param {*} stopOnFade stops playback when fade is complete
+   */
+  fadeTrack(trackId, dir){
+    console.log('fadeTrack', trackId, dir);
+
+    let track = this.tracks[this.currentTrack];
+    let targVolume   = (dir === 'in') ? 1 : 0;
+    let ease         = (dir === 'in') ? Linear.easeIn : Linear.easeIn;
+    let completeCall = (dir === 'out') ? this.onFadeComplete.bind(this) : null;
+    let stopOnFade   = (dir === 'out');
+
+    TweenMax.to(track, 2, {
+      'volume' : targVolume, 
+      'ease'   : ease,
+      'onComplete' : completeCall,
+      'onCompleteParams' : [track, stopOnFade]
+    });
+  }
+
+  onFadeComplete(track, stopOnFade) {
+    console.log('onFadeComplete', track, stopOnFade);
+
+    if(stopOnFade) {
+      track.pause();
+    }
+
+    this.isCrossFading = false;
   }
 
 }
