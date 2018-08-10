@@ -14,21 +14,32 @@ document.getElementsByClassName('controls')[0].appendChild(playPauseButton.templ
 playPauseButton.state = PlayPauseButton.STATE_PLAY;
 
 
-playPauseButton.template.addEventListener('click', () => {
+document.body.addEventListener('click', (event) => {
 
-  soundManager.togglePlayback();
+  // If shift is down, then export a brown noise wav
+  if (event.shiftKey){
+    var wav = soundManager.exportWav();
+    var url = window.URL.createObjectURL(new Blob([wav], {type: 'audio/wav'} ));
+    var a   = document.createElement('a');
+    document.body.appendChild(a);
+    a.href     = url;
+    a.download = 'noise.wav';
+    a.style    = 'display: none';
+    document.body.appendChild(a);
 
-  if(soundManager.isPlaying) {
-    playPauseButton.state = PlayPauseButton.STATE_PAUSE;
+    a.click();
+    window.URL.revokeObjectURL(url);
+    a.remove();
+
+
   } else {
-    playPauseButton.state = PlayPauseButton.STATE_PLAY;
+    soundManager.togglePlayback();
+
+    if(soundManager.isPlaying) {
+      playPauseButton.state = PlayPauseButton.STATE_PAUSE;
+    } else {
+      playPauseButton.state = PlayPauseButton.STATE_PLAY;
+    }
+
   }
 });
-
-
-
-
-
-
-
-
